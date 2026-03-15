@@ -118,28 +118,30 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		microwave_closed_microwave_r1_LowPower,
 		microwave_closed_microwave_r1_setTime,
 		microwave_closed_microwave_r1_Cooking,
-		microwave_closed_microwave_r1_Finished,
 		microwave_closed_microwave_r1_Init,
+		microwave_closed_microwave_r1_Finished,
+		microwave_closed_microwave_r1_Finished_r1_BeepOnState,
+		microwave_closed_microwave_r1_Finished_r1_BeepOffState,
 		$NullState$
 	};
 	
-	private State[] historyVector = new State[1];
+	private State[] historyVector = new State[2];
 	private final State[] stateVector = new State[1];
 	
 	private int nextStateIndex;
 	
 	private ITimer timer;
 	
-	private final boolean[] timeEvents = new boolean[2];
+	private final boolean[] timeEvents = new boolean[4];
 	
-	private long currentTime;
+	private long timeVariable;
 	
-	protected long getCurrentTime() {
-		return currentTime;
+	protected long getTimeVariable() {
+		return timeVariable;
 	}
 	
-	protected void setCurrentTime(long value) {
-		this.currentTime = value;
+	protected void setTimeVariable(long value) {
+		this.timeVariable = value;
 	}
 	
 	
@@ -159,14 +161,14 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		for (int i = 0; i < 1; i++) {
 			stateVector[i] = State.$NullState$;
 		}
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 2; i++) {
 			historyVector[i] = State.$NullState$;
 		}
 		clearEvents();
 		clearOutEvents();
 		sCInterface.setPower(0);
 		
-		setCurrentTime(0);
+		setTimeVariable(0);
 	}
 	
 	public void enter() {
@@ -203,11 +205,14 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 			case microwave_closed_microwave_r1_Cooking:
 				microwave_closed_microwave_r1_Cooking_react(true);
 				break;
-			case microwave_closed_microwave_r1_Finished:
-				microwave_closed_microwave_r1_Finished_react(true);
-				break;
 			case microwave_closed_microwave_r1_Init:
 				microwave_closed_microwave_r1_Init_react(true);
+				break;
+			case microwave_closed_microwave_r1_Finished_r1_BeepOnState:
+				microwave_closed_microwave_r1_Finished_r1_BeepOnState_react(true);
+				break;
+			case microwave_closed_microwave_r1_Finished_r1_BeepOffState:
+				microwave_closed_microwave_r1_Finished_r1_BeepOffState_react(true);
 				break;
 			default:
 				// $NullState$
@@ -260,7 +265,7 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 			return stateVector[0] == State.microwave_OpenDoor;
 		case microwave_closed_microwave:
 			return stateVector[0].ordinal() >= State.
-					microwave_closed_microwave.ordinal()&& stateVector[0].ordinal() <= State.microwave_closed_microwave_r1_Init.ordinal();
+					microwave_closed_microwave.ordinal()&& stateVector[0].ordinal() <= State.microwave_closed_microwave_r1_Finished_r1_BeepOffState.ordinal();
 		case microwave_closed_microwave_r1_HighPower:
 			return stateVector[0] == State.microwave_closed_microwave_r1_HighPower;
 		case microwave_closed_microwave_r1_LowPower:
@@ -269,10 +274,15 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 			return stateVector[0] == State.microwave_closed_microwave_r1_setTime;
 		case microwave_closed_microwave_r1_Cooking:
 			return stateVector[0] == State.microwave_closed_microwave_r1_Cooking;
-		case microwave_closed_microwave_r1_Finished:
-			return stateVector[0] == State.microwave_closed_microwave_r1_Finished;
 		case microwave_closed_microwave_r1_Init:
 			return stateVector[0] == State.microwave_closed_microwave_r1_Init;
+		case microwave_closed_microwave_r1_Finished:
+			return stateVector[0].ordinal() >= State.
+					microwave_closed_microwave_r1_Finished.ordinal()&& stateVector[0].ordinal() <= State.microwave_closed_microwave_r1_Finished_r1_BeepOffState.ordinal();
+		case microwave_closed_microwave_r1_Finished_r1_BeepOnState:
+			return stateVector[0] == State.microwave_closed_microwave_r1_Finished_r1_BeepOnState;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOffState:
+			return stateVector[0] == State.microwave_closed_microwave_r1_Finished_r1_BeepOffState;
 		default:
 			return false;
 		}
@@ -372,21 +382,16 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 	
 	/* Entry action for state 'setTime'. */
 	private void entryAction_Microwave_closed_microwave_r1_setTime() {
-		sCInterface.operationCallback.displayTime(0);
+		setTimeVariable(0);
+		
+		sCInterface.operationCallback.clearDisplay();
 	}
 	
 	/* Entry action for state 'Cooking'. */
 	private void entryAction_Microwave_closed_microwave_r1_Cooking() {
 		timer.setTimer(this, 0, (1 * 1000), true);
-	}
-	
-	/* Entry action for state 'Finished'. */
-	private void entryAction_Microwave_closed_microwave_r1_Finished() {
-		timer.setTimer(this, 1, (5 * 1000), false);
 		
-		sCInterface.operationCallback.display("Finished");
-		
-		sCInterface.operationCallback.beepOn();
+		setTimeVariable(((((timeVariable / 100) * 60)) + ((timeVariable % 100))));
 	}
 	
 	/* Entry action for state 'Init'. */
@@ -394,6 +399,31 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		sCInterface.operationCallback.clearDisplay();
 		
 		sCInterface.operationCallback.closeDoor();
+		
+		sCInterface.operationCallback.stopCook();
+	}
+	
+	/* Entry action for state 'Finished'. */
+	private void entryAction_Microwave_closed_microwave_r1_Finished() {
+		timer.setTimer(this, 1, (5 * 1000), false);
+	}
+	
+	/* Entry action for state 'BeepOnState'. */
+	private void entryAction_Microwave_closed_microwave_r1_Finished_r1_BeepOnState() {
+		timer.setTimer(this, 2, (1 * 1000), false);
+		
+		sCInterface.operationCallback.display("Finished");
+		
+		sCInterface.operationCallback.beepOn();
+	}
+	
+	/* Entry action for state 'BeepOffState'. */
+	private void entryAction_Microwave_closed_microwave_r1_Finished_r1_BeepOffState() {
+		timer.setTimer(this, 3, (1 * 1000), false);
+		
+		sCInterface.operationCallback.clearDisplay();
+		
+		sCInterface.operationCallback.beepOff();
 	}
 	
 	/* Exit action for state 'Cooking'. */
@@ -404,6 +434,16 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 	/* Exit action for state 'Finished'. */
 	private void exitAction_Microwave_closed_microwave_r1_Finished() {
 		timer.unsetTimer(this, 1);
+	}
+	
+	/* Exit action for state 'BeepOnState'. */
+	private void exitAction_Microwave_closed_microwave_r1_Finished_r1_BeepOnState() {
+		timer.unsetTimer(this, 2);
+	}
+	
+	/* Exit action for state 'BeepOffState'. */
+	private void exitAction_Microwave_closed_microwave_r1_Finished_r1_BeepOffState() {
+		timer.unsetTimer(this, 3);
 	}
 	
 	/* 'default' enter sequence for state OpenDoor */
@@ -454,15 +494,6 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		historyVector[0] = stateVector[0];
 	}
 	
-	/* 'default' enter sequence for state Finished */
-	private void enterSequence_Microwave_closed_microwave_r1_Finished_default() {
-		entryAction_Microwave_closed_microwave_r1_Finished();
-		nextStateIndex = 0;
-		stateVector[0] = State.microwave_closed_microwave_r1_Finished;
-		
-		historyVector[0] = stateVector[0];
-	}
-	
 	/* 'default' enter sequence for state Init */
 	private void enterSequence_Microwave_closed_microwave_r1_Init_default() {
 		entryAction_Microwave_closed_microwave_r1_Init();
@@ -470,6 +501,31 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		stateVector[0] = State.microwave_closed_microwave_r1_Init;
 		
 		historyVector[0] = stateVector[0];
+	}
+	
+	/* 'default' enter sequence for state Finished */
+	private void enterSequence_Microwave_closed_microwave_r1_Finished_default() {
+		entryAction_Microwave_closed_microwave_r1_Finished();
+		enterSequence_Microwave_closed_microwave_r1_Finished_r1_default();
+		historyVector[0] = stateVector[0];
+	}
+	
+	/* 'default' enter sequence for state BeepOnState */
+	private void enterSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState_default() {
+		entryAction_Microwave_closed_microwave_r1_Finished_r1_BeepOnState();
+		nextStateIndex = 0;
+		stateVector[0] = State.microwave_closed_microwave_r1_Finished_r1_BeepOnState;
+		
+		historyVector[1] = stateVector[0];
+	}
+	
+	/* 'default' enter sequence for state BeepOffState */
+	private void enterSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState_default() {
+		entryAction_Microwave_closed_microwave_r1_Finished_r1_BeepOffState();
+		nextStateIndex = 0;
+		stateVector[0] = State.microwave_closed_microwave_r1_Finished_r1_BeepOffState;
+		
+		historyVector[1] = stateVector[0];
 	}
 	
 	/* 'default' enter sequence for region Microwave */
@@ -497,11 +553,35 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		case microwave_closed_microwave_r1_Cooking:
 			enterSequence_Microwave_closed_microwave_r1_Cooking_default();
 			break;
-		case microwave_closed_microwave_r1_Finished:
-			enterSequence_Microwave_closed_microwave_r1_Finished_default();
-			break;
 		case microwave_closed_microwave_r1_Init:
 			enterSequence_Microwave_closed_microwave_r1_Init_default();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOnState:
+			entryAction_Microwave_closed_microwave_r1_Finished();
+			deepEnterSequence_Microwave_closed_microwave_r1_Finished_r1();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOffState:
+			entryAction_Microwave_closed_microwave_r1_Finished();
+			deepEnterSequence_Microwave_closed_microwave_r1_Finished_r1();
+			break;
+		default:
+			break;
+		}
+	}
+	
+	/* 'default' enter sequence for region r1 */
+	private void enterSequence_Microwave_closed_microwave_r1_Finished_r1_default() {
+		react_Microwave_closed_microwave_r1_Finished_r1__entry_Default();
+	}
+	
+	/* deep enterSequence with history in child r1 */
+	private void deepEnterSequence_Microwave_closed_microwave_r1_Finished_r1() {
+		switch (historyVector[1]) {
+		case microwave_closed_microwave_r1_Finished_r1_BeepOnState:
+			enterSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState_default();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOffState:
+			enterSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState_default();
 			break;
 		default:
 			break;
@@ -545,18 +625,32 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		exitAction_Microwave_closed_microwave_r1_Cooking();
 	}
 	
-	/* Default exit sequence for state Finished */
-	private void exitSequence_Microwave_closed_microwave_r1_Finished() {
-		nextStateIndex = 0;
-		stateVector[0] = State.$NullState$;
-		
-		exitAction_Microwave_closed_microwave_r1_Finished();
-	}
-	
 	/* Default exit sequence for state Init */
 	private void exitSequence_Microwave_closed_microwave_r1_Init() {
 		nextStateIndex = 0;
 		stateVector[0] = State.$NullState$;
+	}
+	
+	/* Default exit sequence for state Finished */
+	private void exitSequence_Microwave_closed_microwave_r1_Finished() {
+		exitSequence_Microwave_closed_microwave_r1_Finished_r1();
+		exitAction_Microwave_closed_microwave_r1_Finished();
+	}
+	
+	/* Default exit sequence for state BeepOnState */
+	private void exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState() {
+		nextStateIndex = 0;
+		stateVector[0] = State.$NullState$;
+		
+		exitAction_Microwave_closed_microwave_r1_Finished_r1_BeepOnState();
+	}
+	
+	/* Default exit sequence for state BeepOffState */
+	private void exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState() {
+		nextStateIndex = 0;
+		stateVector[0] = State.$NullState$;
+		
+		exitAction_Microwave_closed_microwave_r1_Finished_r1_BeepOffState();
 	}
 	
 	/* Default exit sequence for region Microwave */
@@ -577,11 +671,16 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		case microwave_closed_microwave_r1_Cooking:
 			exitSequence_Microwave_closed_microwave_r1_Cooking();
 			break;
-		case microwave_closed_microwave_r1_Finished:
-			exitSequence_Microwave_closed_microwave_r1_Finished();
-			break;
 		case microwave_closed_microwave_r1_Init:
 			exitSequence_Microwave_closed_microwave_r1_Init();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOnState:
+			exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState();
+			exitAction_Microwave_closed_microwave_r1_Finished();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOffState:
+			exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState();
+			exitAction_Microwave_closed_microwave_r1_Finished();
 			break;
 		default:
 			break;
@@ -603,11 +702,30 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		case microwave_closed_microwave_r1_Cooking:
 			exitSequence_Microwave_closed_microwave_r1_Cooking();
 			break;
-		case microwave_closed_microwave_r1_Finished:
-			exitSequence_Microwave_closed_microwave_r1_Finished();
-			break;
 		case microwave_closed_microwave_r1_Init:
 			exitSequence_Microwave_closed_microwave_r1_Init();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOnState:
+			exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState();
+			exitAction_Microwave_closed_microwave_r1_Finished();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOffState:
+			exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState();
+			exitAction_Microwave_closed_microwave_r1_Finished();
+			break;
+		default:
+			break;
+		}
+	}
+	
+	/* Default exit sequence for region r1 */
+	private void exitSequence_Microwave_closed_microwave_r1_Finished_r1() {
+		switch (stateVector[0]) {
+		case microwave_closed_microwave_r1_Finished_r1_BeepOnState:
+			exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState();
+			break;
+		case microwave_closed_microwave_r1_Finished_r1_BeepOffState:
+			exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState();
 			break;
 		default:
 			break;
@@ -630,6 +748,11 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 	}
 	
 	/* Default react sequence for initial entry  */
+	private void react_Microwave_closed_microwave_r1_Finished_r1__entry_Default() {
+		enterSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState_default();
+	}
+	
+	/* Default react sequence for initial entry  */
 	private void react_Microwave__entry_Default() {
 		enterSequence_Microwave_closed_microwave_default();
 	}
@@ -649,7 +772,12 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 					
 					react_Microwave_closed_microwave_r1_continue();
 				} else {
-					did_transition = false;
+					if (sCInterface.stop) {
+						exitSequence_Microwave_OpenDoor();
+						react_Microwave__entry_Default();
+					} else {
+						did_transition = false;
+					}
 				}
 			}
 		}
@@ -667,7 +795,12 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 					
 					enterSequence_Microwave_OpenDoor_default();
 				} else {
-					did_transition = false;
+					if (sCInterface.stop) {
+						exitSequence_Microwave_closed_microwave();
+						react_Microwave__entry_Default();
+					} else {
+						did_transition = false;
+					}
 				}
 			}
 		}
@@ -732,8 +865,10 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 			}
 		}
 		if (did_transition==false) {
-			if (sCInterface.digit) {
-				sCInterface.operationCallback.displayTime(sCInterface.getDigitValue());
+			if (((sCInterface.digit) && (getTimeVariable()<1000))) {
+				setTimeVariable((((timeVariable * 10)) + sCInterface.getDigitValue()));
+				
+				sCInterface.operationCallback.displayTime(getTimeVariable());
 			}
 		}
 		return did_transition;
@@ -744,7 +879,7 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 		
 		if (try_transition) {
 			if (microwave_closed_microwave_react(try_transition)==false) {
-				if (sCInterface.stop) {
+				if (getTimeVariable()==0) {
 					exitSequence_Microwave_closed_microwave_r1_Cooking();
 					sCInterface.operationCallback.stopCook();
 					
@@ -755,32 +890,10 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 			}
 		}
 		if (did_transition==false) {
-			if (sCInterface.digit) {
-				setCurrentTime(sCInterface.getDigitValue());
-			}
 			if (timeEvents[0]) {
-				sCInterface.operationCallback.displayTime(getCurrentTime());
+				setTimeVariable(getTimeVariable() - 1);
 				
-				setCurrentTime((currentTime - 1));
-			}
-		}
-		return did_transition;
-	}
-	
-	private boolean microwave_closed_microwave_r1_Finished_react(boolean try_transition) {
-		boolean did_transition = try_transition;
-		
-		if (try_transition) {
-			if (microwave_closed_microwave_react(try_transition)==false) {
-				exitSequence_Microwave_closed_microwave_r1_Finished();
-				enterSequence_Microwave_closed_microwave_r1_Init_default();
-			}
-		}
-		if (did_transition==false) {
-			if (timeEvents[1]) {
-				sCInterface.operationCallback.beepOff();
-				
-				sCInterface.operationCallback.clearDisplay();
+				sCInterface.operationCallback.displayTime(((((getTimeVariable() / 60) * 100)) + ((getTimeVariable() % 60))));
 			}
 		}
 		return did_transition;
@@ -801,6 +914,58 @@ public class MicrowaveStatemachine implements IMicrowaveStatemachine {
 					} else {
 						did_transition = false;
 					}
+				}
+			}
+		}
+		return did_transition;
+	}
+	
+	private boolean microwave_closed_microwave_r1_Finished_react(boolean try_transition) {
+		boolean did_transition = try_transition;
+		
+		if (try_transition) {
+			if (microwave_closed_microwave_react(try_transition)==false) {
+				if (timeEvents[1]) {
+					exitSequence_Microwave_closed_microwave_r1_Finished();
+					sCInterface.operationCallback.beepOff();
+					
+					sCInterface.operationCallback.clearDisplay();
+					
+					enterSequence_Microwave_closed_microwave_r1_Init_default();
+				} else {
+					did_transition = false;
+				}
+			}
+		}
+		return did_transition;
+	}
+	
+	private boolean microwave_closed_microwave_r1_Finished_r1_BeepOnState_react(boolean try_transition) {
+		boolean did_transition = try_transition;
+		
+		if (try_transition) {
+			if (microwave_closed_microwave_r1_Finished_react(try_transition)==false) {
+				if (timeEvents[2]) {
+					exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState();
+					enterSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState_default();
+				} else {
+					did_transition = false;
+				}
+			}
+		}
+		return did_transition;
+	}
+	
+	private boolean microwave_closed_microwave_r1_Finished_r1_BeepOffState_react(boolean try_transition) {
+		boolean did_transition = try_transition;
+		
+		if (try_transition) {
+			if (microwave_closed_microwave_r1_Finished_react(try_transition)==false) {
+				if (timeEvents[3]) {
+					exitSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOffState();
+					enterSequence_Microwave_closed_microwave_r1_Finished_r1_BeepOnState_default();
+				} else {
+					did_transition = false;
 				}
 			}
 		}
