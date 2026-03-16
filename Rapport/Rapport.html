@@ -901,7 +901,41 @@
             <section class="main-section">
                 <h2 id="petri" class="section-title">RÉSEAU DE PÉTRI</h2>
                 <h3 class="subsection-title" id="photo-petri">Photo</h3>
+                    <img src="../petriNet.png" alt="Réseau de Pétri" class="petri-image">
                 <h3 class="subsection-title" id="analyse-petri">Analyse</h3>
+                    <p>
+                    Loi de conservation : un réseau de Pétri est conservateur pour un vecteur de pondération W si, pour tout marquage M accessible depuis l’état initial M<sub>0</sub>, la somme pondérée des jetons reste constante (diapo 45) :
+                    </p>
+
+                    <p>
+                    ∑ w<sub>i</sub> · M(p<sub>i</sub>) = K (constante)
+                    </p>
+
+                    <p>
+                    Dans notre graphe, la loi de conservation apparaît au cœur du système, c’est-à-dire au niveau de l’accès au tunnel. 
+                    Si l’on isole deux sous-ensembles d’états différents : P<sub>libre</sub> (l'etat freeTunnel, lorsque le tunnel est vide) et P<sub>tunnel</sub> (mtlDirection et riveSudDirection, lorsqu’une voiture est en train de traverser), la loi de conservation peut s’écrire sous la forme :
+                    </p>
+
+                    <p>
+                    M(P<sub>libre</sub>) + M(P<sub>tunnel</sub>) = 1
+                    </p>
+
+                    <p>
+                    Les simulations de notre réseau montrent que si le tunnel est occupé (M(P<sub>tunnel</sub>) = 1), alors P<sub>libre</sub> est nécessairement vide. 
+                    En effet, le jeton a été pris par l’un des deux côtés du tunnel, ce qui permet à cette voie d’accueillir une voiture. 
+                    </p>
+
+                    <p>
+                    Une autre manière d’interpréter ce résultat, même si elle diffère légèrement de l’approche présentée dans le cours,
+                    consiste à voir le tunnel comme une « boîte noire » : le nombre de voitures qui entrent doit être égal au nombre de voitures qui en sortent.
+                    Rien ne se perd et rien ne se crée, les voitures ne font que circuler dans un flux, comme dans les réseaux de flots étudiés
+                    en recherche opérationnelle.
+                    </p>
+
+                    <p>
+                    Par exemple, dans notre réseau, si l’on retirait les générateurs et que l’on plaçait initialement 5 voitures de chaque côté
+                    du tunnel, alors au final 5 voitures ressortiraient également de chaque côté.
+                    </p>
                 <h2 id="statechart" class="section-title">STATECHART</h2>
                 <h3 class="subsection-title" id="photo-statechart">Photo</h3>
                 <h3 class="subsection-title" id="code">Analyse</h3>
