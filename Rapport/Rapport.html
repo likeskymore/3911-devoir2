@@ -903,6 +903,7 @@
                 <h3 class="subsection-title" id="photo-petri">Photo</h3>
                     <img src="../petriNet.png" alt="Réseau de Pétri" class="petri-image">
                 <h3 class="subsection-title" id="analyse-petri">Analyse</h3>
+                    <h3>Conservation</h3>
                     <p>
                     Loi de conservation : un réseau de Pétri est conservateur pour un vecteur de pondération W si, pour tout marquage M accessible depuis l’état initial M<sub>0</sub>, la somme pondérée des jetons reste constante (diapo 45) :
                     </p>
@@ -936,6 +937,47 @@
                     Par exemple, dans notre réseau, si l’on retirait les générateurs et que l’on plaçait initialement 5 voitures de chaque côté
                     du tunnel, alors au final 5 voitures ressortiraient également de chaque côté.
                     </p>
+                    <h3>Graphe de couverture et Équité</h3>
+                        
+                        <figure>
+                            <img src="../couverture.png" alt="Graphe de Couverture du tunnel" class="couverture-image" style="width: 400px; height: auto;">
+                            <figcaption>Analyse des états du système par graphe de couverture.</figcaption>
+                        </figure>
+
+                        <p>
+                            Notre réseau utilise les places/états lightRiveSud, lightMtl et freeTunnel pour réguler le droit de passage. 
+                            Lorsqu'une voiture occupe le tunnel, les deux lumieres de contrôle ainsi que freeTunnel sont vides, 
+                            interdisant toute nouvelle entrée.
+                        </p>
+
+                        <p>
+                            Même si la place freeTunnel est techniquement en trop parce que les feux bloquent déjà l'entrée, 
+                            on a choisi de la laisser pour que le schéma colle mieux à l'énoncé. Ça permet de bien visualiser 
+                            le tunnel comme une ressource physique qui se vide et se remplit, ce qui rend le réseau plus intuitif. (un extra safety)
+                        </p>
+
+                        <p>
+                            En analysant les cycles, on voit que dès qu'une voiture sort vers Montréal, 
+                            elle dépose un jeton dans lightMtl pour donner la priorité à Montréal. Ces jetons 
+                            de permission tournent en rond : ils obligent le système à donner la priorité à chaque 
+                            entrée avant de revenir au point de départ. Cette alternance forcée garantit qu'il n'y a 
+                            pas de famine, parce qu'aucun côté ne peut garder le tunnel pour lui tout seul sans laisser passer l'autre côté.
+                        </p>
+
+                        <p>
+                            En regardant le graphe de couverture, on voit qu'il n'y a aucun état bloquant ou cul-de-sac. 
+                            Toutes les transitions sont au moins de niveau L1, ce qui veut dire qu'elles restent accessibles 
+                            depuis l'état initial.
+                        </p>
+
+                        <p>
+                            Comme le graphe montre qu'il y a toujours des transitions possibles et que les feux, combinés au freeTunnel,
+                            forcent une alternance stricte, on en conclut que le système est vivant et équitable. Tant que les sources 
+                            génèrent des voitures, personne ne reste bloqué indéfiniment puisque le tunnel est obligé de basculer d'un 
+                            côté à l'autre. Dans notre modèle, on a bien vu qu'un problème pourrait apparaître si un côté était plein 
+                            alors que l'autre était vide, car la priorité pourrait rester coincée là où il n'y a personne. 
+                            C'est pour ça qu'on a utilisé des générateurs qui assurent un flot constant de chaque bord, garantissant que le cycle ne s'arrête jamais.
+                        </p>
                 <h2 id="statechart" class="section-title">STATECHART</h2>
                 <h3 class="subsection-title" id="photo-statechart">Photo</h3>
                 <h3 class="subsection-title" id="code">Analyse</h3>
