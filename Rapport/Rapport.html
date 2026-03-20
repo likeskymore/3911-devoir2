@@ -389,7 +389,7 @@
         }
 
         .report-aside {
-            max-width: 450px;
+            max-width: 550px;
             padding: 10px;
             background-color: #6667AB;
         }
@@ -692,6 +692,8 @@
         }
 
         .report-footer {
+            display: flex;
+            justify-content: space-between;
             padding: 24px 5vw 24px;
             color: #fff;
             background-color: #292723;
@@ -738,6 +740,10 @@
             content: '🗸';
             color: currentColor;
         }
+        #link{
+            text-decoration: none;
+            color: white;
+        }
     </style>
 
 </head>
@@ -746,7 +752,7 @@
     <header class="report-header">
         <div class="title-section">
             <div>
-                <h1 class="report-title">Rapport du livrable 2 - Modélisation et analyse</h1>
+                <h1 class="report-title" id="up">Rapport du livrable 2 - Modélisation et analyse</h1>
                 <p>Ce deuxième rapport s’articule autour de trois axes majeurs :</p>
 
                 <ul>
@@ -881,17 +887,22 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <h3 class="nav-item-title"><a class="nav-item-title__link" href="#amelioration">AMÉLIORATION DEVOIR 1 (tâche 3)</a></h3>
+                        <h3 class="nav-item-title"><a class="nav-item-title__link" href="#amelioration">DESIGN LOGICIEL (tâche 3)</a></h3>
                         <ul class="bare-list nav-item-details">
-                            <a class="nav-item-title__link" href="#redesign"><li class="dash">Redesign</li></a>
-                            <a class="nav-item-title__link" href="#reutilisabilite"><li class="dash">Justification Réutilisabilité</li></a>
+                            <a class="nav-item-title__link" href="#diagrammeClass"><li class="dash">Révision du diagramme de classe</li></a>
+                            <a class="nav-item-title__link" href="#diagrammeSequence"><li class="dash">Révision des diagrammes de séquence ou de collaboration</li></a>
+                            <a class="nav-item-title__link" href="#paquet"><li class="dash">Révision du diagramme de paquets</li></a>
+                            <a class="nav-item-title__link" href="#ocl"><li class="dash">Révision des contraintes OCL</li></a>
+                            <a class="nav-item-title__link" href="#reutilisabilite"><li class="dash">Identification des modules réutilisables</li></a>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <h3 class="nav-item-title"><a class="nav-item-title__link" href="#justification">JUSTIFICATION DEVOIR 1 (tâche 4)</a></h3>
+                        <h3 class="nav-item-title"><a class="nav-item-title__link" href="#justification">QUALITÉ DU DESIGN (tâche 4)</a></h3>
                         <ul class="bare-list nav-item-details">
-                            <a class="nav-item-title__link" href="#couplage-cohesion"><li class="dash">Justification Couplage / Cohesion</li></a>
-                            <a class="nav-item-title__link" href="#graphIA"><li class="dash">Graphe IA Paquet (instabilité d'abstraction)</li></a>
+                            <a class="nav-item-title__link" href="#couplage-cohesion"><li class="dash">Discussion du couplage et de la cohésion des modules</li></a>
+                            <a class="nav-item-title__link" href="#fardeau"><li class="dash">Discussion du fardeau des classes </li></a>
+                            <a class="nav-item-title__link" href="#graphIA"><li class="dash">Graphe IA et justification </li></a>
+                            <a class="nav-item-title__link" href="#principe"><li class="dash">Justification de l'application des principes de conception </li></a>
                         </ul>
                     </li>
                 </ul>
@@ -980,14 +991,53 @@
                         </p>
                 <h2 id="statechart" class="section-title">STATECHART</h2>
                 <h3 class="subsection-title" id="photo-statechart">Photo</h3>
-                <h3 class="subsection-title" id="code">Analyse</h3>
-                <h2 id="amelioration" class="section-title">AMÉLIORATION DEVOIR 1</h2>
-                <h3 class="subsection-title" id="redesign">Redesign</h3>
-                <h3 class="subsection-title" id="reutilisabilite">Justification Réutilisabilité</h3>
-                <h2 id="justification" class="section-title">JUSTIFICATION DEVOIR 1</h2>
-                <h3 class="subsection-title" id="couplage-cohesion">Justification Couplage / Cohesion</h3>
-                <h3 class="subsection-title" id="graphIA">Graphe IA Paquet (instabilité d'abstraction)</h3>
+                <h3 class="subsection-title" id="code">Code</h3>
 
+                <h2 id="amelioration" class="section-title">Design logiciel</h2>
+                <h3 class="subsection-title" id="diagrammeClass">Révision du diagramme de classe</h3>
+                <h3 class="subsection-title" id="diagrammeSequence">Révision des diagrammes de séquence ou de collaboration</h3>
+                <h3 class="subsection-title" id="paquet">Révision du diagramme de paquets</h3>
+                <h3 class="subsection-title" id="ocl">Révision des contraintes OCL</h3>
+                <h3 class="subsection-title" id="reutilisabilite">Identification des modules réutilisables</h3>
+
+                <h2 id="justification" class="section-title">Qualité du design</h2>
+                <h3 class="subsection-title" id="couplage-cohesion">Discussion du couplage et de la cohésion des modules</h3>
+                <p>
+                    Puisque le design a été conçu selon une architecture MVC, le couplage demeure plutôt bas pour un système de cette taille. 
+                    Ce patron permet en effet de séparer l'application en reliant l'interface uniquement au contrôleur, lequel est ensuite connecté à certains modèles.
+                    <br>
+                    <br>
+                    Cette approche apporte une amélioration considérable sur plusieurs plans : <br>
+
+                    D'abord, au niveau du couplage de contenu, puisque les classes d'interface n'accèdent plus directement aux composants 
+                    internes des modèles. Ensuite, concernant le couplage commun, on évite l'entremêlement des variables entre la vue et le modèle.
+                    Enfin, et c'est le point majeur, on note une nette progression en matière de couplage par contrôle. Il existe désormais 
+                    une section entière dédiée à la gestion des communications entre les classes d'interface et les modèles ; en d'autres termes, 
+                    P ne contrôle plus l'exécution de Q de manière directe. Ainsi, cette architecture permet d'éliminer les trois types de couplage problématiques étudiés en classe.
+                    <br>
+                    <br>
+                    Sans ce patron de conception, chaque modèle utilisé dans une interface devrait y être directement rattaché, créant ainsi un 
+                    code spaghetti où tout s'entremêle pour combler les besoins de chaque vue (diapo 43 du powerpoint 3.3 MVC). Dans notre design, on peut modifier la vue sans jamais toucher 
+                    au modèle, et vice-versa : les modèles modifient la logique sans casser l'interface, car le contrôleur se réserve la responsabilité d'assurer un bon affichage.
+                    <br>
+                    <br>
+                    En soi, le MVC ne réduit pas drastiquement le nombre de connexions, puisqu'il introduit une toute nouvelle section de classes pour gérer 
+                    l'interaction. Toutefois, dans la vision globale du design, cette structure permet de s'appuyer sur trois grands blocs distincts : la vue, 
+                    le contrôleur et le modèle.
+                    <br>
+                    <br>
+                    Le code gagne ainsi en modularité. On se retrouve avec un contrôleur qui sert d'unique intermédiaire, dépendant simplement d'une vue et d'un 
+                    modèle. Cela transforme un couplage complexe et entremêlé en un couplage de meilleure qualité, beaucoup plus facile à maintenir.
+                </p>
+
+                <p>
+                    D'un autre côté, la cohésion est grandement améliorée. Suivant la même logique que pour le couplage, 
+                    la séparation claire des trois rôles permet une spécialisation des classes qui résulte en une haute cohésion.
+                </p>
+                
+                <h3 class="subsection-title" id="fardeau">Discussion du fardeau des classes</h3>
+                <h3 class="subsection-title" id="graphIA">Graphe IA et justification</h3>
+                <h3 class="subsection-title" id="principe">Justification de l'application des principes de conception</h3>
             </section>
 
         </div>
@@ -998,6 +1048,8 @@
             IFT3911 <br>
             Hiver 2026
         </p>
+
+        <p><a href="#up" id="link">Go up</a></p>
     </footer>
 </body>
 
