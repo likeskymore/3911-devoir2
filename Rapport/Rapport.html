@@ -912,7 +912,7 @@
             <section class="main-section">
                 <h2 id="petri" class="section-title">RÉSEAU DE PÉTRI</h2>
                 <h3 class="subsection-title" id="photo-petri">Photo</h3>
-                    <img src="../petriNet.png" alt="Réseau de Pétri" class="petri-image">
+                    <img src="../Assets/petriNet.png" alt="Réseau de Pétri" class="petri-image">
                 <h3 class="subsection-title" id="analyse-petri">Analyse</h3>
                     <h3>Conservation</h3>
                     <p>
@@ -951,7 +951,7 @@
                     <h3>Graphe de couverture et Équité</h3>
                         
                         <figure>
-                            <img src="../couverture.png" alt="Graphe de Couverture du tunnel" class="couverture-image" style="width: 400px; height: auto;">
+                            <img src="../Assets/couverture.png" alt="Graphe de Couverture du tunnel" class="couverture-image" style="width: 400px; height: auto;">
                             <figcaption>Analyse des états du système par graphe de couverture.</figcaption>
                         </figure>
 
@@ -990,11 +990,92 @@
                             C'est pour ça qu'on a utilisé des générateurs qui assurent un flot constant de chaque bord, garantissant que le cycle ne s'arrête jamais.
                         </p>
                 <h2 id="statechart" class="section-title">STATECHART</h2>
-                <h3 class="subsection-title" id="photo-statechart">Photo</h3>
+                <h3 class="subsection-title" id="photo-statechart">Photo/Video</h3>
+                        <img src="../Assets/statechart.png" alt="statechart micro-onde">
+                        <video controls>
+                            <source src="../Assets/recording.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                 <h3 class="subsection-title" id="code">Code</h3>
+                        <p>Consultez le dossier « Microwave » où se trouve le code de ce micro-ondes.</p>
 
                 <h2 id="amelioration" class="section-title">Design logiciel</h2>
                 <h3 class="subsection-title" id="diagrammeClass">Révision du diagramme de classe</h3>
+                    <div class="use-case">
+                        <img class="use-case-diagram" src="../Assets/Class Diagram1.svg" alt="Diagramme de classes">
+                    </div>
+                    <p>
+                        <a href="../Assets/Class Diagram1.svg" target="_blank" class="inline-link">
+                            Ouvrir le diagramme de classe dans un nouvel onglet pour une meilleure lisibilité :
+                        </a>
+                    </p>
+
+                    <p>
+                        Nous avons intégré les commentaires reçus lors de la correction du premier devoir, notamment 
+                        en adoptant une architecture s'appuyant davantage sur des classes abstraites.
+
+                        Nous avons transformé les classes Location, Transport et Section en classes abstraites et 
+                        ajouté une classe abstraite Seats. Puisque ces dernières ne sont jamais instanciées directement,
+                        mais servent de base à des classes dérivées, ce choix est plus cohérent. Par exemple, un « transport »
+                        en soi n'est jamais utilisé tel quel ; il faut toujours préciser s'il s'agit d'un avion, d'un bateau ou 
+                        d'un train. Une classe parente concrète n'avait donc pas de sens, tandis qu'une classe abstraite reflète 
+                        mieux la réalité du système.
+                        <br>
+                        <br>
+                        En ce qui concerne les principes de conception SOLID :
+
+                        <ul>
+                            <li>
+                                Single Responsibility Principle: Chaque classe possède une mission clairement définie. 
+                                Les classes de la « Vue » affichent les informations nécessaires au menu client, au menu 
+                                administrateur et à la page de paiement. Les contrôleurs gèrent les interactions entre les 
+                                vues et les modèles selon une relation quasi directe (1-1), tandis que les modèles représentent
+                                les entités du système et leur logique métier.
+                            </li>
+                            <li>
+                                Open/Closed Principle: Les classes sont ouvertes à l'extension, mais fermées à la modification.
+                                Dans notre conception, l'ajout de nouvelles fonctionnalités se fait par la création de nouveaux 
+                                contrôleurs, modèles et vues sans modifier le code existant. L'usage de classes abstraites permet 
+                                également d'ajouter de nouveaux types de transports ou de sections sans impacter la structure actuelle.
+                            </li>
+                            <li>
+                                Liskov Substitution Principle: Les classes dérivées peuvent être utilisées de manière interchangeable avec leurs classes de base. 
+                                Par exemple, un client est un utilisateur (User) et peut être utilisé dans n'importe quel contexte 
+                                où un objet de ce type est attendu.
+                            </li>
+                            <li>
+                                Interface Segregation Principle: Notre conception utilise une interface unique (Permission) contenant une méthode de vérification d'authentification. 
+                                Elle est utilisée par les contrôleurs nécessitant une validation avant de permettre une action. Les contrôleurs n'ayant 
+                                pas besoin de cette fonctionnalité ne sont pas contraints de l'implémenter.
+                            </li>
+                            <li>
+                                Dependency Inversion Principle: Les modules de haut niveau ne dépendent pas directement des modules de bas niveau, mais plutôt d'abstractions.
+                                C'est le changement majeur de notre design : alors que le premier devoir reposait sur des classes 
+                                concrètes héritant d'autres classes concrètes, le passage aux classes abstraites permet aux entités comme les sièges, les transports 
+                                ou les sections de dépendre de classes plus générales.
+
+                            </li>
+
+                            <li>
+                                Composite Reuse Principle: Grâce au Dependency Inversion Principle, notre conception privilégie désormais la composition et l'extension 
+                                de classes abstraites plutôt que l'héritage simple.
+                            </li>
+
+                        </ul>
+                    </p>
+                    <p>
+                        Dans notre nouveau diagramme de classes, l'introduction de l'abstraction a rendu 
+                        certains attributs et méthodes redondants au sein des classes concrètes. Nous avons 
+                        néanmoins choisi de les conserver pour illustrer l'héritage/extension naturel de ces 
+                        propriétés (ce qui évite de présenter plusieurs classes vides aussi, car les types de 
+                        voyages présentés dans l'énoncé sont très similaires). Malgré cette apparente redondance, 
+                        le maintien d'une structure, où des classes concrètes héritent de classes abstraites, est essentiel 
+                        pour garantir un système flexible. Cette structure est beaucoup plus future-proof et permettrait 
+                        une extension plus générale du design des consignes spécifiques à un type de voyage, comme un 
+                        numéro de porte d'embarquement pour un vol par exemple, directement dans la classe concernée, 
+                        sans nécessiter de modifications complexes ou risquées dans le reste du système.
+                    </p>
+                    
                 <h3 class="subsection-title" id="diagrammeSequence">Révision des diagrammes de séquence ou de collaboration</h3>
                 <h3 class="subsection-title" id="paquet">Révision du diagramme de paquets</h3>
                 <h3 class="subsection-title" id="ocl">Révision des contraintes OCL</h3>
