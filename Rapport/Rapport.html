@@ -753,12 +753,13 @@
         <div class="title-section">
             <div>
                 <h1 class="report-title" id="up">Rapport du livrable 2 - Modélisation et analyse</h1>
-                <p>Ce deuxième rapport s’articule autour de trois axes majeurs :</p>
+                <p>Ce deuxième rapport s’articule autour de quatres axes majeurs :</p>
 
                 <ul>
-                    <li>La modélisation du réseau de Petri <em>Tunnel</em> et l’analyse de ses propriétés.</li>
-                    <li>La modélisation du statechart <em>Four à micro-ondes</em> ainsi que l’intégration du code généré dans le code fourni.</li>
-                    <li>L’amélioration et l’analyse du design du devoir 1 à travers l’évaluation de sa qualité orientée objet.</li>
+                    <li>Modélisation du réseau de Petri Tunnel et analyse de ses propriétés.</li>
+                    <li>Modélisation du statechart Four à micro-ondes, suivie de l’intégration du code généré dans le code fourni.</li>
+                    <li>Révision du design des diagrammes de classes, de séquence et de paquets, ainsi que des contraintes OCL du devoir 1.</li>
+                    <li>Analyse des qualités du design en termes de couplage, de cohésion, de fardeau, de graphes AI et de principes de conception.</li>
                 </ul>
             </div>
 
@@ -1082,9 +1083,55 @@
                     </p>
                     
                 <h3 class="subsection-title" id="diagrammeSequence">Révision des diagrammes de séquence ou de collaboration</h3>
+                <P>
+                    Comme nous avons uniquement apporté des modifications mineures 
+                    notamment transformer certaines classes parentes en classes abstraites, 
+                    distinguer les sièges en types individuels et ajuster légèrement des éléments 
+                    comme le lien entre le paiement et le client, ces changements n’ont pas eu d’impact 
+                    sur les diagrammes de séquence. En effet, ces derniers représentent le comportement 
+                    global du système du point de vue des acteurs, et non ses détails internes.
+
+                    De la même manière, les trois diagrammes de collaboration sont restés inchangés, 
+                    puisque les classes impliquées ainsi que leurs interactions demeurent identiques.
+
+                    Enfin, étant donné que nous avions obtenu la note maximale, nous n’avons pas jugé nécessaire 
+                    d’apporter des modifications supplémentaires à la structure.
+                </P>
+                    
                 <h3 class="subsection-title" id="paquet">Révision du diagramme de paquets</h3>
+                <P>
+                    Nous n'avons pas modifié le diagramme de paquets. En effet, aucun changement structurel majeur ne justifiait 
+                    un redesign de ce diagramme. La seule modification structurelle concerne l’ajout de classes pour distinguer 
+                    les sièges en trois types distincts, mais celles-ci demeurent dans le même paquet de transport.
+
+                    Dans le même ordre d'idée que pour les diagrammes de séquence et de collaboration, 
+                    comme nous avions obtenu la note maximale pour cette section, nous considérons que 
+                    le diagramme de paquets est déjà clair et bien structuré, et ne nécessite donc pas de révision.
+                </P>
+                   
+
                 <h3 class="subsection-title" id="ocl">Révision des contraintes OCL</h3>
+
+                <p>
+                    Nous avons changé que quelques noms de classes, spécifiquement F4 et C5, où les sièges sont 
+                    désormais respectivement PlaneSeat et BoatSeat, mais les contraintes OCL sont restées les mêmes, 
+                    puisque les règles métier n'ont pas été modifiées.
+                    <a href="../Assets/OCLRedesign.pdf">Open the PDF</a>
+                </p>
                 <h3 class="subsection-title" id="reutilisabilite">Identification des modules réutilisables</h3>
+
+<p>Pour identifier les modules réutilisables, nous nous sommes assurés de trouver des classes faiblement couplées (peu dépendantes du reste du système et donc réutilisables dans d’autres systèmes) et ayant une haute cohésion (ayant une mission claire et précise qui peut être réutilisable dans d’autres systèmes). 
+
+<p>Selon nous, aucune classe n’est vraiment réutilisable au niveau des vues : elles sont toutes propres à notre système, car l’affichage est un choix personnel de la manière dont on veut présenter nos informations. </p> 
+    
+<p>
+    Pour les contrôleurs, nous avons identifié 3 classes qui pourraient potentiellement être réutilisables :  systemController, loginController, et paymentController, qui agissent respectivement comme controlleur de creation de compte, de connexion et de paiement. En effet, ces trois fonctions sont très courantes dans les systèmes informatiques, et les classes qui les implémentent sont souvent similaires d’un système à l’autre. 
+    Par exemple, le loginController pourrait être réutilisé dans n’importe quel système nécessitant une authentification, tandis que le paymentController pourrait être utiliser dans tous type de service ou la vente est presente.
+</p>
+
+<p>Ensuite, pour les modèles, la classe User est une classe plutôt générale, ayant des attributs que l’on retrouvera dans d’autres systèmes. La même chose peut être dite des classes trip, qui contient pratiquement toujours un departureTime, arrivalTime, un price, une duration, etc. Ainsi que payment, qui contient les informations de la carte, les informations de l’utilisateur et une facture.</p>
+
+<p>Finalement, la seule interface que nous avons implémentée étant les permissions, elle pourrait aussi être réutilisable pour tout autre système ayant un système d’authentification et de comptes.</p>
 
                 <h2 id="justification" class="section-title">Qualité du design</h2>
                 <h3 class="subsection-title" id="couplage-cohesion">Discussion du couplage et de la cohésion des modules</h3>
