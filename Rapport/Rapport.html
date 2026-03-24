@@ -1027,27 +1027,32 @@
                         <ul>
                             <li>
                                 Single Responsibility Principle: Chaque classe possède une mission clairement définie. 
-                                Les classes de la « Vue » affichent les informations nécessaires au menu client, au menu 
-                                administrateur et à la page de paiement. Les contrôleurs gèrent les interactions entre les 
-                                vues et les modèles selon une relation quasi directe (1-1), tandis que les modèles représentent
-                                les entités du système et leur logique métier.
+                                Les classes de la « Vue » se limitent à l'affichage des informations nécessaires au menu 
+                                client, au menu administrateur et à la page de paiement. Chaque contrôleur gère une interaction 
+                                bien précise liée à un modèle ou à un concept restreint, garantissant ainsi une responsabilité unique. 
+                                Enfin, chaque modèle représente une entité propre au domaine du voyage, avec des attributs et des méthodes 
+                                spécifiques à son rôle.
                             </li>
+                            <br>
                             <li>
                                 Open/Closed Principle: Les classes sont ouvertes à l'extension, mais fermées à la modification.
                                 Dans notre conception, l'ajout de nouvelles fonctionnalités se fait par la création de nouveaux 
                                 contrôleurs, modèles et vues sans modifier le code existant. L'usage de classes abstraites permet 
                                 également d'ajouter de nouveaux types de transports ou de sections sans impacter la structure actuelle.
                             </li>
+                            <br>
                             <li>
                                 Liskov Substitution Principle: Les classes dérivées peuvent être utilisées de manière interchangeable avec leurs classes de base. 
                                 Par exemple, un client est un utilisateur (User) et peut être utilisé dans n'importe quel contexte 
                                 où un objet de ce type est attendu.
                             </li>
+                            <br>
                             <li>
                                 Interface Segregation Principle: Notre conception utilise une interface unique (Permission) contenant une méthode de vérification d'authentification. 
                                 Elle est utilisée par les contrôleurs nécessitant une validation avant de permettre une action. Les contrôleurs n'ayant 
                                 pas besoin de cette fonctionnalité ne sont pas contraints de l'implémenter.
                             </li>
+                            <br>
                             <li>
                                 Dependency Inversion Principle: Les modules de haut niveau ne dépendent pas directement des modules de bas niveau, mais plutôt d'abstractions.
                                 C'est le changement majeur de notre design : alors que le premier devoir reposait sur des classes 
@@ -1055,7 +1060,7 @@
                                 ou les sections de dépendre de classes plus générales.
 
                             </li>
-
+                            <br>
                             <li>
                                 Composite Reuse Principle: Grâce au Dependency Inversion Principle, notre conception privilégie désormais la composition et l'extension 
                                 de classes abstraites plutôt que l'héritage simple.
