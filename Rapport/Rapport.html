@@ -853,16 +853,30 @@
             </tr>
             <tr>
                 <td class="first_col">
-                    Amélioration Devoir 1
+                    Design Logiciel
                 </td>
                 <td>
-                    33%
+                    60%
                 </td>
                 <td>
-                    33%
+                    20%
                 </td>
                 <td>
-                    33%
+                    20%
+                </td>
+            </tr>
+                        <tr>
+                <td class="first_col">
+                    Qualité du design
+                </td>
+                <td>
+                    50%
+                </td>
+                <td>
+                    35%
+                </td>
+                <td>
+                    15%
                 </td>
             </tr>
         </tbody>
@@ -1015,12 +1029,13 @@
                         Nous avons intégré les commentaires reçus lors de la correction du premier devoir, notamment 
                         en adoptant une architecture s'appuyant davantage sur des classes abstraites.
 
-                        Nous avons transformé les classes <b>Location</b>, <b>Transport</b> et <b>Section</b> en classes abstraites et 
-                        ajouté une classe abstraite Seats. Puisque ces dernières ne sont jamais instanciées directement,
-                        mais servent de base à des classes dérivées, ce choix est plus cohérent. Par exemple, un « transport »
-                        en soi n'est jamais utilisé tel quel ; il faut toujours préciser s'il s'agit d'un avion, d'un bateau ou 
-                        d'un train. Une classe parente concrète n'avait donc pas de sens, tandis qu'une classe abstraite reflète 
-                        mieux la réalité du système.
+                        Nous avons transformé les classes <b>User</b>, <b>Trip</b>, <b>Location</b>, <b>Transport</b> et <b>Section</b> en classes abstraites et 
+                        ajouté une classe abstraite <b>Seats</b>. Puisque ces dernières ne sont jamais instanciées directement,
+                        mais servent de base à des classes dérivées, ce choix est plus cohérent. Par exemple, un « transport » en soi n'est jamais utilisé tel quel ;
+                        il faut toujours préciser s'il s'agit d'un avion, d'un bateau ou d'un train. Même chose pour un utilisateur : 
+                        il est soit un client, soit un administrateur. Une classe parente concrète n'avait donc pas de sens, car dans 
+                        aucun cas notre système n'interagissait directement avec une instance de la classe User, tandis qu'une classe abstraite 
+                        reflète mieux son rôle de « blueprint » pour les types d'utilisateurs spécifiques.
                         <br>
                         <br>
                         En ce qui concerne les principes de conception SOLID :
@@ -1045,26 +1060,40 @@
                             <li>
                                 Liskov Substitution Principle: Les classes dérivées peuvent être utilisées de manière interchangeable avec leurs classes de base. 
                                 Par exemple, un client est un utilisateur (User) et peut être utilisé dans n'importe quel contexte 
-                                où un objet de ce type est attendu.
+                                où un objet de ce type est attendu. En revanche, l’inverse n’est pas vrai : tout utilisateur n’est pas forcément un client.
+
+                                Ainsi, si des méthodes de personnalisation du profil sont définies pour un type générique User, il est cohérent que les différentes types d’utilisateurs, 
+                                comme les clients et les administrateurs, puissent toutes modifier leur profil, sans introduire de comportement inattendu.
                             </li>
                             <br>
                             <li>
-                                Interface Segregation Principle: Notre conception utilise une interface unique (Permission) contenant une méthode de vérification d'authentification. 
-                                Elle est utilisée par les contrôleurs nécessitant une validation avant de permettre une action. Les contrôleurs n'ayant 
-                                pas besoin de cette fonctionnalité ne sont pas contraints de l'implémenter.
+                                Interface Segregation Principle: Ce principe stipule qu’une classe ne doit pas être forcée d’implémenter des interfaces dont elle n’a 
+                                pas besoin. Autrement dit, il vaut mieux avoir des interfaces petites et spécifiques plutôt qu’une interface générale trop large.
+
+                                Dans notre conception, nous utilisons une interface appelée Permission, qui contient une méthode dédiée à 
+                                la vérification de l’authentification. Cette interface est implémentée uniquement par les contrôleurs qui nécessitent 
+                                un utilisateur authentifié avant d’exécuter certaines actions (par exemple : accès à des fonctionnalités sensibles).
                             </li>
                             <br>
                             <li>
                                 Dependency Inversion Principle: Les modules de haut niveau ne dépendent pas directement des modules de bas niveau, mais plutôt d'abstractions.
-                                C'est le changement majeur de notre design : alors que le premier devoir reposait sur des classes 
-                                concrètes héritant d'autres classes concrètes, le passage aux classes abstraites permet aux entités comme les sièges, les transports 
-                                ou les sections de dépendre de classes plus générales.
+                                C'est le changement majeur de notre design : alors que notre premier devoir reposait sur des classes 
+                                concrètes héritant d'autres classes concrètes, le passage aux classes abstraites permet aux entités comme les users, les trips, les sièges, les transports 
+                                ou les sections de dépendre de classes plus générales ainsi améliorant la flexibilité et la maintenabilité du système. Par exemple, les 
+                                différentes classes de sièges (PlaneSeat, BoatSeat, TrainSeat) dépendent désormais d’une classe abstraite Seat. Cette approche permet 
+                                d’ajouter facilement de nouveaux types de sièges, comme un PrivateJetSeat avec des caractéristiques supplémentaires (par exemple un indice de confort), 
+                                sans modifier les classes existantes. Étroitement relié à l’Open/Closed Principle (OCP).
 
                             </li>
                             <br>
                             <li>
-                                Composite Reuse Principle: Grâce au Dependency Inversion Principle, notre conception privilégie désormais la composition et l'extension 
-                                de classes abstraites plutôt que l'héritage simple.
+                                Composite Reuse Principle: Grâce au Dependency Inversion Principle, notre conception privilégie désormais la composition et l’extension de classes abstraites plutôt que l’héritage simple.
+
+                                Notre design utilise déjà principalement un héritage limité à un seul niveau, évitant ainsi toute hiérarchie profonde (deep inheritance). De plus, notre modèle repose largement sur la composition. Par exemple, la classe Transport contient une composition de Section, et les sections contiennent elles-mêmes une composition de sièges.
+
+                                Une amélioration majeure que nous aurions pu apporter (identifiée lors d’une révision de cette partie, mais qui impliquerait de modifier le calcul du fardeau et potentiellement le graphe IA donc nous nous contentons seulement de la mentionner) serait de revoir le calcul du prix. Une approche respectant davantage le Composite Reuse Principle consisterait à déplacer cette responsabilité dans une classe distincte, associée à la classe abstraite Section.
+
+                                Ainsi, au lieu d’utiliser l’héritage pour gérer les différents types de calcul, nous pourrions déléguer cette logique à une classe de calcul de prix contenant des méthodes adaptées à chaque type de section. Cela permettrait d’éviter la duplication du code de calcul dans les différentes classes de sections et d’améliorer la maintenabilité du système.
                             </li>
 
                         </ul>
@@ -1120,18 +1149,25 @@
                 </p>
                 <h3 class="subsection-title" id="reutilisabilite">Identification des modules réutilisables</h3>
 
-<p>Pour identifier les modules réutilisables, nous nous sommes assurés de trouver des classes faiblement couplées (peu dépendantes du reste du système et donc réutilisables dans d’autres systèmes) et ayant une haute cohésion (ayant une mission claire et précise qui peut être réutilisable dans d’autres systèmes). 
+                <p>Pour identifier les modules réutilisables, nous nous sommes assurés de trouver des classes faiblement 
+                    couplées (peu dépendantes du reste du système et donc réutilisables dans d’autres systèmes) et ayant une 
+                    haute cohésion (ayant une mission claire et précise qui peut être réutilisable dans d’autres systèmes). 
 
-<p>Selon nous, aucune classe n’est vraiment réutilisable au niveau des vues : elles sont toutes propres à notre système, car l’affichage est un choix personnel de la manière dont on veut présenter nos informations. </p> 
-    
-<p>
-    Pour les contrôleurs, nous avons identifié 3 classes qui pourraient potentiellement être réutilisables :  <b>systemController</b>, <b>loginController</b>, et <b>paymentController</b>, qui agissent respectivement comme controlleur de creation de compte, de connexion et de paiement. En effet, ces trois fonctions sont très courantes dans les systèmes informatiques, et les classes qui les implémentent sont souvent similaires d’un système à l’autre. 
-    Par exemple, le <b>loginController</b> pourrait être réutilisé dans n’importe quel système nécessitant une authentification, tandis que le <b>paymentController</b> pourrait être utiliser dans tous type de service ou la vente est presente.
-</p>
+                <p>Selon nous, aucune classe n’est vraiment réutilisable au niveau des vues : elles sont toutes propres à notre 
+                    système, car l’affichage est un choix personnel de la manière dont on veut présenter nos informations. </p> 
+                    
+                <p>
+                    Pour les contrôleurs, nous avons identifié 3 classes qui pourraient potentiellement être réutilisables :  
+                    <b>systemController</b>, <b>loginController</b>, et <b>paymentController</b>, qui agissent respectivement 
+                    comme controlleur de creation de compte, de connexion et de paiement. En effet, ces trois fonctions sont très 
+                    courantes dans les systèmes informatiques, et les classes qui les implémentent sont souvent similaires d’un système à l’autre. 
+                    Par exemple, le <b>loginController</b> pourrait être réutilisé dans n’importe quel système nécessitant une authentification, 
+                    tandis que le <b>paymentController</b> pourrait être utiliser dans tous type de service ou la vente est presente.
+                </p>
 
-<p>Ensuite, pour les modèles, la classe <b>User</b> est une classe plutôt générale, ayant des attributs que l’on retrouvera dans d’autres systèmes. La même chose peut être dite des classes <b>Trip</b>, qui contient pratiquement toujours un departureTime, arrivalTime, un price, une duration, etc. Ainsi que <b>Payment</b>, qui contient les informations de la carte, les informations de l’utilisateur et une facture.</p>
+                <p>Ensuite, pour les modèles, la classe <b>User</b> est une classe plutôt générale, ayant des attributs que l’on retrouvera dans d’autres systèmes. La même chose peut être dite des classes <b>Trip</b>, qui contient pratiquement toujours un departureTime, arrivalTime, un price, une duration, etc. Ainsi que <b>Payment</b>, qui contient les informations de la carte, les informations de l’utilisateur et une facture.</p>
 
-<p>Finalement, la seule interface que nous avons implémentée étant les permissions, elle pourrait aussi être réutilisable pour tout autre système ayant un système d’authentification et de comptes.</p>
+                <p>Finalement, la seule interface que nous avons implémentée étant les permissions, elle pourrait aussi être réutilisable pour tout autre système ayant un système d’authentification et de comptes.</p>
 
                 <h2 id="justification" class="section-title">Qualité du design</h2>
                 <h3 class="subsection-title" id="couplage-cohesion">Discussion du couplage et de la cohésion des modules</h3>
@@ -1169,9 +1205,116 @@
                 </p>
                 
                 <h3 class="subsection-title" id="fardeau">Discussion du fardeau des classes</h3>
+
+                <p>
+                    Notre conception présente une séparation entre le domaine de classes de fondation et les couches applicatives.
+                    D'un côté, nous retrouvons des éléments comme l'interface Permission ou la classe abstraite Menu qui agissent 
+                    comme de véritables bibliothèques. Étant donné qu'elles ne dépendent d'aucune classe spécifique à notre système, 
+                    elles restent générales, ce qui facilite leur réutilisation dans n'importe quel autre contexte. Par exemple, 
+                    les méthodes utilisées à l'intérieur, respectivement verifyPermission et displayMenu, sont des méthodes qu'on pourrait retrouver 
+                    dans toute application où il y aurait une interface (GUI) ainsi qu'un système de compte et d'authentification. (Domaines de fondation)
+                    <br>
+                    <br>
+                    À l'inverse, le fardeau s'alourdit considérablement dès que l'on remonte vers les classes de vues. 
+                    Comme celles-ci sont propres à notre application de gestion de voyages, elles se situent au plus haut 
+                    niveau de dépendance, connectées directement à un contrôleur qui sera éventuellement connecté à plusieurs 
+                    modèles. (Domaine applicatif)
+                    <br>
+                    <br>
+                    Ensuite, les contrôleurs doivent orchestrer plusieurs modèles, ayant donc un fardeau moyennement élevé, 
+                    tandis que les modèles sont souvent moins dépendants, ayant donc un fardeau plus faible. Cependant, 
+                    la hiérarchie allant du Seat au Trip montre que même nos entités de base supportent un certain poids relationnel. 
+                    Le fardeau le moins élevé des modèles est la classe Administrator qui se distingue par sa seule connexion à User, sa classe Parent, car notre mise 
+                    en situation ne lui attribue aucune responsabilité spécifique, ce qui la rend très simple et peu dépendante du reste 
+                    du système.(Domaine applicatif et domaine métier pour certains modèles car peuvent être réutilisables dans d'autres systèmes de gestion de voyages)
+                    <br>
+                    <br>
+                    On observe d'ailleurs une progression logique de gauche à droite sur le diagramme : les vues sollicitent les contrôleurs, 
+                    qui eux-mêmes s'appuient sur une structure complexe de modèles pour récupérer les données. Ce cumul de relations crée mécaniquement 
+                    un spectre de fardeau qui s'intensifie à mesure que l'on se rapproche de la vue, tandis que les modèles, plus éloignés de l'interface, restent plus légers.
+                    Cela s'explique par le fait que les vues, étant au plus proche de l'actor qui interagit sur l'interface, doivent gérer une multitude de cas d'utilisation et d'interactions, ce qui les rend plus complexes et plus dépendantes du reste du système. 
+                    En revanche, les modèles, en tant que représentations abstraites des données et de la logique métier, sont conçus pour être plus génériques et moins liés à des détails spécifiques de l'interface utilisateur, ce qui leur confère un fardeau plus léger.
+                </p>
+
                 <h3 class="subsection-title" id="graphIA">Graphe IA et justification</h3>
                 <h4>Graphe IA</h4>
                 <img src="../Assets/iaGraph.png" alt="Graphe IA">
+                <h4>Comptage</h4> 
+                <p>
+                Ce = (couplage efférent) : nombre de dépendances sortantes <br>
+                Ca = (couplage afférent) : nombre de dépendances entrantes <br><br>
+
+                I = Ce / (Ce + Ca) : Instabilité <br><br>
+
+                Nc = nombre de classes totales <br>
+                Na = nombre de classes abstraites <br><br>
+
+                A = Na / Nc : Abstraction
+                </p>
+                
+                <ul>
+                <li>
+                    <b>Paquet Vue</b>
+                    <ul>
+                    <li>
+                        <strong>Instabilité :</strong>
+                        <ul>
+                        <li>Ce = 8 (contrôleurs)</li>
+                        <li>Ca = 1 (portail)</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Abstraction :</strong>
+                        <ul>
+                        <li>Nc = 5 (implémentations de Menu + Menu)</li>
+                        <li>Na = 1 (Menu)</li>
+                        </ul>
+                    </li>
+                    </ul>
+                </li>
+                
+                    <li>
+                        <b>Paquet Controlleur</b>
+                        <ul>
+                            <li>
+                                <strong>Instabilité :</strong>
+                                <ul>
+                                <li>Ce = 6 (User, Reservation, Payment, Trip, Location, Company)</li>
+                                <li>Ca = 4 (ClientMenu, LoginMenu, AdminMenu, PaymentMenu)</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>Abstraction :</strong>
+                                <ul>
+                                <li>Nc = 9 (contrôleurs + Permission)</li>
+                                <li>Na = 1 (Permission)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                        
+                    <li>
+                        <b>Paquet Modèle</b>
+                        <ul>
+                            <li>
+                                <strong>Instabilité :</strong>
+                                <ul>
+                                <li>Ce = 0</li>
+                                <li>Ca = 8 (contrôleurs)</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>Abstraction :</strong>
+                                <ul>
+                                <li>Nc = 26 (tous les classes modèles)</li>
+                                <li>Na = 6 (User, Trip, Location, Transport, Section, Seat)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    
+
+                </ul>
                 <h4>Justification</h4>
                 <ul>
                     <li>
@@ -1186,7 +1329,8 @@
                                 Le paquet contient principalement des classes concrètes (implémentations de menus), ce qui est cohérent avec son rôle opérationnel orienté interface utilisateur.
                             </li>
                             <li>
-                                Conclusion : Le paquet Vue étant instable et principalement concret, il se situe en bas à droite du graphe IA, proche du comportement attendu pour des modules applicatifs dépendants d’autres composants.
+                                Le paquet Vue, étant instable et principalement concret, se situe en bas à droite du graphe IA, ce qui correspond au comportement attendu pour des modules applicatifs qui dépendent fortement d’autres composants.
+                                Cette position le place également proche de la séquence idéale dans le graphe IA, reflétant un bon équilibre entre abstraction et stabilité pour ce type de module dans l’architecture globale.
                             </li>
                         </ul>
                     </li>
@@ -1194,15 +1338,15 @@
                         <b>Paquet Controlleur</b>
                         <ul>
                             <li>
-                                Instabilité (I) : Ce = 8, Ca = 4 → I = 8/12 ≈ 0.73 &mdash;
+                                Instabilité (I) : Ce = 6, Ca = 4 → I = 6/10 = 0.6 &mdash;
                                 Les contrôleurs dépendent de nombreux modèles et sont modérément instables, ce qui reflète leur rôle de coordination entre la Vue et le Modèle.
                             </li>
                             <li>
-                                Abstraction (A) : Na = 1, Nc = 9 → A = 1/9 = 0.11 &mdash;
-                                Les contrôleurs sont essentiellement concrets, ce qui est normal car ils implémentent la logique opérationnelle spécifique.
+                                Abstraction (A) : Na = 1, Nc = 9 → A = 1/9 ≈ 0.11 &mdash;
+                                Les contrôleurs sont essentiellement concrets, ce qui est normal car ils implémentent la logique opérationnelle spécifique. 
                             </li>
                             <li>
-                                Conclusion : Le paquet Controller se situe également dans la zone basse-droite du graphe, indiquant un module concret mais instable. Cela est acceptable dans une architecture MVC où les contrôleurs orchestrent les interactions sans fournir d’API abstraites.                            
+                                Le paquet Controller se situe également dans la zone basse-droite du graphe, indiquant un module concret mais instable, avec un degré d’instabilité et d’abstraction tout à fait raisonnable.                          
                             </li>
                         </ul>
                     </li>
@@ -1218,12 +1362,26 @@
                                 Le paquet contient un certain nombre de classes abstraites, représentant les entités et interfaces métier.
                             </li>
                             <li>
-                                Conclusion : Le paquet Model se situe en bas à gauche du graphe IA : stable et relativement abstrait, ce qui correspond aux bonnes pratiques de conception de paquets stables (open for extension, closed for modification).
+                                Conclusion : Le paquet Model se situe en bas à gauche du graphe IA, ce qui signifie qu’il est stable mais relativement concret. Cette position correspond à la "Zone of Pain", car elle indique une forte stabilité associée à un faible niveau d’abstraction, c’est-à-dire une présence trop importante de classes concrètes.
+                                Cependant, beaucoup des classes que nous considérons concrètes sont en réalité des dérivées de classes abstraites, ce qui ne réduit pas nécessairement la flexibilité du système.
                             </li>
                         </ul>
                     </li>
                 </ul>
+
+    
+
                 <h3 class="subsection-title" id="principe">Justification de l'application des principes de conception</h3>
+                <p>
+                    Comme discuté précédemment dans la section de révision du diagramme de classes, notre design respecte les principes SOLID + C.
+                    <br>
+                    <br>
+                    Chaque classe a une responsabilité clairement définie, les modules sont ouverts à l’extension mais fermés à la modification, les classes dérivées peuvent être utilisées de manière interchangeable avec leurs classes de base, les interfaces sont spécifiques à leurs clients (nous n’avons qu’une seule interface), les modules de haut niveau ne dépendent pas directement des modules de bas niveau, et enfin, la délégation/composition est privilégiée par rapport à l’héritage simple grâce à l’introduction de classes abstraites.
+                    <br>
+                    <br>
+                    Pour plus de détails, référez-vous à la section de révision du diagramme de classes, où nous avons expliqué en détail comment notre design respecte chacun de ces principes.
+
+                </p>
             </section>
 
         </div>
