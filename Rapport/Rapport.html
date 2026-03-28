@@ -1070,9 +1070,9 @@
                                 Interface Segregation Principle: Ce principe stipule qu’une classe ne doit pas être forcée d’implémenter des interfaces dont elle n’a 
                                 pas besoin. Autrement dit, il vaut mieux avoir des interfaces petites et spécifiques plutôt qu’une interface générale trop large.
 
-                                Dans notre conception, nous utilisons une interface appelée Permission, qui contient une méthode dédiée à 
+                                Dans notre conception, nous utilisons qu'une interface seule appelée Permission, qui contient une méthode dédiée à 
                                 la vérification de l’authentification. Cette interface est implémentée uniquement par les contrôleurs qui nécessitent 
-                                un utilisateur authentifié avant d’exécuter certaines actions (par exemple : accès à des fonctionnalités sensibles).
+                                un utilisateur authentifié avant d'exécuter certaines actions (par exemple : accès à la page de données personnelles sensibles d'un compte).
                             </li>
                             <br>
                             <li>
@@ -1091,7 +1091,7 @@
 
                                 Notre design utilise déjà principalement un héritage limité à un seul niveau, évitant ainsi toute hiérarchie profonde (deep inheritance). De plus, notre modèle repose largement sur la composition. Par exemple, la classe Transport contient une composition de Section, et les sections contiennent elles-mêmes une composition de sièges.
 
-                                Une amélioration majeure que nous aurions pu apporter (identifiée lors d’une révision de cette partie, mais qui impliquerait de modifier le calcul du fardeau et potentiellement le graphe IA donc nous nous contentons seulement de la mentionner) serait de revoir le calcul du prix. Une approche respectant davantage le Composite Reuse Principle consisterait à déplacer cette responsabilité dans une classe distincte, associée à la classe abstraite Section.
+                                Une amélioration majeure que nous aurions pu apporter (identifiée lors d’une révision de cette partie, mais qui impliquerait de modifier le graphe IA donc nous nous contentons seulement de la mentionner) serait de revoir le calcul du prix. Une approche respectant davantage le Composite Reuse Principle consisterait à déplacer cette responsabilité dans une classe distincte, associée à la classe abstraite Section.
 
                                 Ainsi, au lieu d’utiliser l’héritage pour gérer les différents types de calcul, nous pourrions déléguer cette logique à une classe de calcul de prix contenant des méthodes adaptées à chaque type de section. Cela permettrait d’éviter la duplication du code de calcul dans les différentes classes de sections et d’améliorer la maintenabilité du système.
                             </li>
@@ -1167,7 +1167,7 @@
 
                 <p>Ensuite, pour les modèles, la classe <b>User</b> est une classe plutôt générale, ayant des attributs que l’on retrouvera dans d’autres systèmes. La même chose peut être dite des classes <b>Trip</b>, qui contient pratiquement toujours un departureTime, arrivalTime, un price, une duration, etc. Ainsi que <b>Payment</b>, qui contient les informations de la carte, les informations de l’utilisateur et une facture.</p>
 
-                <p>Finalement, la seule interface que nous avons implémentée étant les permissions, elle pourrait aussi être réutilisable pour tout autre système ayant un système d’authentification et de comptes.</p>
+                <p>Finalement, la seule interface que nous avons implémentée étant les <b>Permissions</b>, elle pourrait également être réutilisée pour tout autre système disposant d’un mécanisme d’authentification et de gestion de comptes. La classe abstraite <b>Menu</b> contient aussi des méthodes d’affichage primitives que toute application pourrait utiliser pour créer une interface utilisateur, ce qui en fait une classe réutilisable.</p>
 
                 <h2 id="justification" class="section-title">Qualité du design</h2>
                 <h3 class="subsection-title" id="couplage-cohesion">Discussion du couplage et de la cohésion des modules</h3>
@@ -1178,9 +1178,9 @@
                     <br>
                     Cette approche apporte une amélioration considérable sur plusieurs plans : <br>
 
-                    D'abord, au niveau du couplage de contenu, puisque les classes d'interface n'accèdent plus directement aux composants 
-                    internes des modèles. Ensuite, concernant le couplage commun, on évite l'entremêlement des variables entre la vue et le modèle.
-                    Enfin, et c'est le point majeur, on note une nette progression en matière de couplage par contrôle. Il existe désormais 
+                    D'abord, au niveau du <b>couplage de contenu</b>, puisque les classes d'interface n'accèdent plus directement aux composants 
+                    internes des modèles. Ensuite, concernant le <b>couplage commun</b>, on évite l'entremêlement des variables entre la vue et le modèle.
+                    Enfin, et c'est le point majeur, on note une nette progression en matière de <b>couplage par contrôle</b>. Il existe désormais 
                     une section entière dédiée à la gestion des communications entre les classes d'interface et les modèles ; en d'autres termes, 
                     P ne contrôle plus l'exécution de Q de manière directe. Ainsi, cette architecture permet d'éliminer les trois types de couplage problématiques étudiés en classe.
                     <br>
@@ -1232,7 +1232,7 @@
                     On observe d'ailleurs une progression logique de gauche à droite sur le diagramme : les vues sollicitent les contrôleurs, 
                     qui eux-mêmes s'appuient sur une structure complexe de modèles pour récupérer les données. Ce cumul de relations crée mécaniquement 
                     un spectre de fardeau qui s'intensifie à mesure que l'on se rapproche de la vue, tandis que les modèles, plus éloignés de l'interface, restent plus légers.
-                    Cela s'explique par le fait que les vues, étant au plus proche de l'actor qui interagit sur l'interface, doivent gérer une multitude de cas d'utilisation et d'interactions, ce qui les rend plus complexes et plus dépendantes du reste du système. 
+                    Cela s'explique par le fait que les vues, étant plus proche de l'actor qui interagit sur l'interface, doivent gérer une multitude de cas d'utilisation et d'interactions, ce qui les rend plus complexes et plus dépendantes du reste du système (domaine applicatif). 
                     En revanche, les modèles, en tant que représentations abstraites des données et de la logique métier, sont conçus pour être plus génériques et moins liés à des détails spécifiques de l'interface utilisateur, ce qui leur confère un fardeau plus léger.
                 </p>
 
