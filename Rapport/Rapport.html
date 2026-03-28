@@ -1208,10 +1208,10 @@
 
                 <p>
                     Notre conception présente une séparation entre le domaine de classes de fondation et les couches applicatives.
-                    D'un côté, nous retrouvons des éléments comme l'interface Permission ou la classe abstraite Menu qui agissent 
+                    D'un côté, nous retrouvons des éléments comme l'interface <b>Permission</b> ou la classe abstraite <b>Menu</b> qui agissent 
                     comme de véritables bibliothèques. Étant donné qu'elles ne dépendent d'aucune classe spécifique à notre système, 
                     elles restent générales, ce qui facilite leur réutilisation dans n'importe quel autre contexte. Par exemple, 
-                    les méthodes utilisées à l'intérieur, respectivement verifyPermission et displayMenu, sont des méthodes qu'on pourrait retrouver 
+                    les méthodes utilisées à l'intérieur, respectivement <b>verifyPermission</b> et <b>displayMenu</b>, sont des méthodes qu'on pourrait retrouver 
                     dans toute application où il y aurait une interface (GUI) ainsi qu'un système de compte et d'authentification. (Domaines de fondation)
                     <br>
                     <br>
@@ -1223,8 +1223,8 @@
                     <br>
                     Ensuite, les contrôleurs doivent orchestrer plusieurs modèles, ayant donc un fardeau moyennement élevé, 
                     tandis que les modèles sont souvent moins dépendants, ayant donc un fardeau plus faible. Cependant, 
-                    la hiérarchie allant du Seat au Trip montre que même nos entités de base supportent un certain poids relationnel. 
-                    Le fardeau le moins élevé des modèles est la classe Administrator qui se distingue par sa seule connexion à User, sa classe Parent, car notre mise 
+                    la hiérarchie allant du <b>Seat</b> au <b>Trip</b> montre que même nos entités de base supportent un certain poids relationnel. 
+                    Le fardeau le moins élevé des modèles est la classe <b>Administrator</b> qui se distingue par sa seule connexion à <b>User</b>, sa classe <b>Parent</b>, car notre mise 
                     en situation ne lui attribue aucune responsabilité spécifique, ce qui la rend très simple et peu dépendante du reste 
                     du système.(Domaine applicatif et domaine métier pour certains modèles car peuvent être réutilisables dans d'autres systèmes de gestion de voyages)
                     <br>
