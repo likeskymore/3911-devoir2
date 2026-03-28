@@ -1224,7 +1224,7 @@
                     Ensuite, les contrôleurs doivent orchestrer plusieurs modèles, ayant donc un fardeau moyennement élevé, 
                     tandis que les modèles sont souvent moins dépendants, ayant donc un fardeau plus faible. Cependant, 
                     la hiérarchie allant du <b>Seat</b> au <b>Trip</b> montre que même nos entités de base supportent un certain poids relationnel. 
-                    Le fardeau le moins élevé des modèles est la classe <b>Administrator</b> qui se distingue par sa seule connexion à <b>User</b>, sa classe <b>Parent</b>, car notre mise 
+                    Le fardeau le moins élevé des modèles est la classe <b>Administrator</b> qui se distingue par sa seule connexion à <b>User</b>, sa classe parent, car notre mise 
                     en situation ne lui attribue aucune responsabilité spécifique, ce qui la rend très simple et peu dépendante du reste 
                     du système.(Domaine applicatif et domaine métier pour certains modèles car peuvent être réutilisables dans d'autres systèmes de gestion de voyages)
                     <br>
@@ -1343,7 +1343,7 @@
                             </li>
                             <li>
                                 Abstraction (A) : Na = 1, Nc = 9 → A = 1/9 ≈ 0.11 &mdash;
-                                Les contrôleurs sont essentiellement concrets, ce qui est normal car ils implémentent la logique opérationnelle spécifique. 
+                                Les contrôleurs sont essentiellement concrets, car ils aggissent comme intermédiaires directs entre les vues et les modèles (les vues doivent passer par des classes concrètes pour accéder aux fonctionnalités des modèles).
                             </li>
                             <li>
                                 Le paquet Controller se situe également dans la zone basse-droite du graphe, indiquant un module concret mais instable, avec un degré d’instabilité et d’abstraction tout à fait raisonnable.                          
